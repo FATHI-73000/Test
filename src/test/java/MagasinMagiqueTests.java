@@ -6,24 +6,24 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class MagasinMagiqueTests {
 
-    // --- ITEMS NORMAUX ---
+    // --- TESTS POUR LES ITEMS NORMAUX ---
     @Test
     public void testUpdateNormalItem() {
-        Item normal = new Item("Normal", 5, 10);
+        MagasinMagique.Item normal = new MagasinMagique.Item("Normal", 5, 10);
         MagasinMagique magasin = new MagasinMagique(Arrays.asList(normal));
 
-        magasin.updateItems();
+        magasin.updateQuality();
 
-        assertEquals(4, normal.sellIn);
-        assertEquals(9, normal.quality);
+        assertEquals(4, normal.sellIn);  // sellIn diminue de 1
+        assertEquals(9, normal.quality); // quality diminue de 1
     }
 
     @Test
     public void testNormalItemDegradesTwiceAfterSellIn() {
-        Item normal = new Item("Normal", 0, 10);
+        MagasinMagique.Item normal = new MagasinMagique.Item("Normal", 0, 10);
         MagasinMagique magasin = new MagasinMagique(Arrays.asList(normal));
 
-        magasin.updateItems();
+        magasin.updateQuality();
 
         assertEquals(-1, normal.sellIn);
         assertEquals(8, normal.quality); // -2 car date dépassée
@@ -31,66 +31,66 @@ public class MagasinMagiqueTests {
 
     @Test
     public void testQualityNeverNegative() {
-        Item normal = new Item("Normal", 0, 0);
+        MagasinMagique.Item normal = new MagasinMagique.Item("Normal", 0, 0);
         MagasinMagique magasin = new MagasinMagique(Arrays.asList(normal));
 
-        magasin.updateItems();
+        magasin.updateQuality();
 
-        assertEquals(0, normal.quality);
+        assertEquals(0, normal.quality); // quality ne peut pas être négative
     }
 
-    // --- COMTÉ ---
+    // --- TESTS POUR COMTÉ ---
     @Test
     public void testUpdateComteItem() {
-        Item comte = new Item("Comté", 2, 10);
+        MagasinMagique.Item comte = new MagasinMagique.Item("Comté", 2, 10);
         MagasinMagique magasin = new MagasinMagique(Arrays.asList(comte));
 
-        magasin.updateItems();
+        magasin.updateQuality();
 
         assertEquals(1, comte.sellIn);
-        assertEquals(11, comte.quality);
+        assertEquals(11, comte.quality); // quality augmente de 1
     }
 
     @Test
     public void testComteIncreasesTwiceAfterSellIn() {
-        Item comte = new Item("Comté", 0, 10);
+        MagasinMagique.Item comte = new MagasinMagique.Item("Comté", 0, 10);
         MagasinMagique magasin = new MagasinMagique(Arrays.asList(comte));
 
-        magasin.updateItems();
+        magasin.updateQuality();
 
         assertEquals(-1, comte.sellIn);
-        assertEquals(12, comte.quality);
+        assertEquals(12, comte.quality); // augmente de 2 car date dépassée
     }
 
     @Test
-    public void testComteQualityMax50() {
-        Item comte = new Item("Comté", 5, 50);
+    public void testQualityNeverAbove50() {
+        MagasinMagique.Item comte = new MagasinMagique.Item("Comté", 5, 50);
         MagasinMagique magasin = new MagasinMagique(Arrays.asList(comte));
 
-        magasin.updateItems();
+        magasin.updateQuality();
 
-        assertEquals(50, comte.quality);
+        assertEquals(50, comte.quality); // reste bloqué à 50
     }
 
-    // --- KRYPTONITE ---
+    // --- TESTS POUR KRYPTONITE ---
     @Test
     public void testKryptoniteNeverChanges() {
-        Item kryptonite = new Item("Kryptonite", 5, 80);
+        MagasinMagique.Item kryptonite = new MagasinMagique.Item("Kryptonite", 5, 80);
         MagasinMagique magasin = new MagasinMagique(Arrays.asList(kryptonite));
 
-        magasin.updateItems();
+        magasin.updateQuality();
 
-        assertEquals(5, kryptonite.sellIn);
-        assertEquals(80, kryptonite.quality);
+        assertEquals(5, kryptonite.sellIn);  // ne change pas
+        assertEquals(80, kryptonite.quality); // ne change pas
     }
 
-    // --- PASS VIP CONCERT ---
+    // --- TESTS POUR PASS VIP CONCERT ---
     @Test
     public void testPassVIPIncreasesBy1() {
-        Item pass = new Item("Pass VIP Concert", 15, 20);
+        MagasinMagique.Item pass = new MagasinMagique.Item("Pass VIP Concert", 15, 20);
         MagasinMagique magasin = new MagasinMagique(Arrays.asList(pass));
 
-        magasin.updateItems();
+        magasin.updateQuality();
 
         assertEquals(14, pass.sellIn);
         assertEquals(21, pass.quality);
@@ -98,10 +98,10 @@ public class MagasinMagiqueTests {
 
     @Test
     public void testPassVIPIncreasesBy2When10DaysOrLess() {
-        Item pass = new Item("Pass VIP Concert", 10, 20);
+        MagasinMagique.Item pass = new MagasinMagique.Item("Pass VIP Concert", 10, 20);
         MagasinMagique magasin = new MagasinMagique(Arrays.asList(pass));
 
-        magasin.updateItems();
+        magasin.updateQuality();
 
         assertEquals(9, pass.sellIn);
         assertEquals(22, pass.quality);
@@ -109,10 +109,10 @@ public class MagasinMagiqueTests {
 
     @Test
     public void testPassVIPIncreasesBy3When5DaysOrLess() {
-        Item pass = new Item("Pass VIP Concert", 5, 20);
+        MagasinMagique.Item pass = new MagasinMagique.Item("Pass VIP Concert", 5, 20);
         MagasinMagique magasin = new MagasinMagique(Arrays.asList(pass));
 
-        magasin.updateItems();
+        magasin.updateQuality();
 
         assertEquals(4, pass.sellIn);
         assertEquals(23, pass.quality);
@@ -120,35 +120,35 @@ public class MagasinMagiqueTests {
 
     @Test
     public void testPassVIPQualityDropsTo0AfterConcert() {
-        Item pass = new Item("Pass VIP Concert", 0, 20);
+        MagasinMagique.Item pass = new MagasinMagique.Item("Pass VIP Concert", 0, 20);
         MagasinMagique magasin = new MagasinMagique(Arrays.asList(pass));
 
-        magasin.updateItems();
+        magasin.updateQuality();
 
         assertEquals(-1, pass.sellIn);
         assertEquals(0, pass.quality);
     }
 
-    // --- POUVOIRS MAGIQUES ---
+    // --- TESTS POUR POUVOIRS MAGIQUES ---
     @Test
     public void testPouvoirsMagiquesDegradeTwiceAsFast() {
-        Item pouvoirs = new Item("Pouvoirs magiques", 3, 6);
+        MagasinMagique.Item pouvoirs = new MagasinMagique.Item("Pouvoirs magiques", 3, 6);
         MagasinMagique magasin = new MagasinMagique(Arrays.asList(pouvoirs));
 
-        magasin.updateItems();
+        magasin.updateQuality();
 
         assertEquals(2, pouvoirs.sellIn);
-        assertEquals(4, pouvoirs.quality); // -2
+        assertEquals(4, pouvoirs.quality); // -2 car dégradation double
     }
 
     @Test
     public void testPouvoirsMagiquesAfterSellInDegradeEvenFaster() {
-        Item pouvoirs = new Item("Pouvoirs magiques", 0, 6);
+        MagasinMagique.Item pouvoirs = new MagasinMagique.Item("Pouvoirs magiques", 0, 6);
         MagasinMagique magasin = new MagasinMagique(Arrays.asList(pouvoirs));
 
-        magasin.updateItems();
+        magasin.updateQuality();
 
         assertEquals(-1, pouvoirs.sellIn);
-        assertEquals(2, pouvoirs.quality); // -2 encore après expiration
+        assertEquals(2, pouvoirs.quality); // -4 après date dépassée
     }
 }
